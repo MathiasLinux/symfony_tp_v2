@@ -21,6 +21,7 @@ class SellerController extends AbstractController
             'sellers' => $sellerRepository->findAll(),
         ]);
     }
+
     #[Route('/new', name: 'app_seller_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -28,7 +29,7 @@ class SellerController extends AbstractController
         $form = $this->createForm(AddSellerFormType::class, $seller);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() and $form->isValid()){
+        if ($form->isSubmitted() and $form->isValid()) {
             $entityManager->persist($seller);
             $entityManager->flush();
 
@@ -40,11 +41,40 @@ class SellerController extends AbstractController
             'form' => $form,
         ]);
     }
+
     #[Route('/{id}', name: 'app_seller_show', methods: ['GET'])]
     public function show(Seller $seller): Response
     {
         return $this->render('seller/show.html.twig', [
             'seller' => $seller,
         ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_seller_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Seller $seller, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(AddSellerFormType::class, $seller);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_seller', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('seller/new.html.twig', [
+            'seller' => $seller,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_seller_delete', methods: ['POST'])]
+    public function delete(Request $request, Seller $seller, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $seller->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($seller);
+            $entityManager->flush();
+        }
+        return $this->redirectToRoute('app_seller', [], Response::HTTP_SEE_OTHER);
     }
 }

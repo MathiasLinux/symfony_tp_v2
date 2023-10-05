@@ -1,0 +1,13 @@
+body {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100dvh;
+}
+
+.aroundSeller {
+    margin: 2%
+}
+
+.formDeleteSeller {
+    margin-top: 2%;
+}

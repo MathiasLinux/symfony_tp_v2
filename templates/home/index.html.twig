@@ -3,7 +3,9 @@
 {% block title %}Hello HomeController!{% endblock %}
 
 {% block body %}
-<div>
-
-</div>
+    <div class="aroundSeller">
+        {% for seller in sellers %}
+            <a class="btn btn-primary" href="">{{ seller.title }}</a>
+        {% endfor %}
+    </div>
 {% endblock %}
