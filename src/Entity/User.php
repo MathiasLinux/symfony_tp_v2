@@ -50,18 +50,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
     /**
      * A visual identifier that represents this user.
      *
@@ -167,5 +155,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getClient(): Collection
     {
         return $this->client;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getEmail();
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
     }
 }
