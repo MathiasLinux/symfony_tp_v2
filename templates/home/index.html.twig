@@ -1,11 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Welcom to Symfony TP{% endblock %}
+{% block title %}Welcome to Symfony TP{% endblock %}
 
 {% block body %}
     <div class="aroundSeller">
+        <h1>Welcome to Symfony TP</h1>
+        <h2>Our Sellers:</h2>
         {% for seller in sellers %}
-            <a class="btn btn-primary" href="">{{ seller.title }}</a>
+            <a class="btn btn-primary" href="{{ path('app_seller_show', {'id': seller.id}) }}">{{ seller.title }}</a>
         {% endfor %}
     </div>
 {% endblock %}

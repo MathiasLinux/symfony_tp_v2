@@ -24,6 +24,7 @@
         </table>
         <a class="btn btn-primary" href="{{ path('app_seller') }}">Back to list</a>
         <a class="btn btn-warning" href="{{ path('app_seller_edit', {'id': seller.id}) }}">Edit</a>
+        <a class="btn btn-success" href="{{ path('app_seller_booking', {'id': seller.id}) }}">Take an appointment</a>
 
         {{ include('seller/_delete_form.html.twig') }}
     </div>

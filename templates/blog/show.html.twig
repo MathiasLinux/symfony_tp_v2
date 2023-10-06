@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="marginDivBlock">
+        <h1>{{ post.name }}</h1>
+        <div class="datesPostDiv">
+            <div class="publishedDate">Published the {{ post.createdAt | date("d/m/Y") }}</div>
+            <div class="publishedDate">Update the {{ post.updatedAt | date("d/m/Y") }}</div>
+        </div>
+        <div class="aroundTag">
+            <div class="tagsGroupPost"><span class="tagsPosts">Tags:</span>
+                {% for aTag in post.tag %}
+                    <span class="eachTagPost badge bg-secondary">{{ aTag }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <img class="postImgShow" src="{{ vich_uploader_asset(post) }}" alt="">
+        <p>{{ post.content | raw }}</p>
+    </div>
+{% endblock %}
+
+{% block title %}
+    {{ post.name }}
+{% endblock %}
+

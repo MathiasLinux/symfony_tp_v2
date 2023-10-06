@@ -11,3 +11,38 @@ body {
 .formDeleteSeller {
     margin-top: 2%;
 }
+
+.marginDivBlock {
+    margin: 2%;
+}
+
+.linkPostCard {
+    text-decoration: none;
+}
+
+.postImgShow {
+    width: 100%;
+}
+
+.datesPostDiv {
+    display: flex;
+    justify-content: space-between;
+}
+
+.publishedDate {
+    font-style: italic;
+}
+
+.aroundTag {
+    margin: 2% 0
+}
+
+.tagsGroupPost {
+    display: flex;
+    align-items: center;
+    gap: 1%
+}
+
+.tagsPosts {
+    font-size: 16pt;
+}
