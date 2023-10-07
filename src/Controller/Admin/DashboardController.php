@@ -3,7 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Booking;
+use App\Entity\Comment;
 use App\Entity\Post;
+use App\Entity\Product;
 use App\Entity\Seller;
 use App\Entity\Tag;
 use App\Entity\User;
@@ -36,8 +38,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Sellers');
         yield MenuItem::linkToCrud('Seller', 'fa-solid fa-store', Seller::class);
         yield MenuItem::linkToCrud('Booking', 'fa-solid fa-calendar-check', Booking::class);
+        yield MenuItem::linkToCrud('Product', 'fa-solid fa-cart-shopping', Product::class);
         yield MenuItem::section('Blog');
         yield MenuItem::linkToCrud('Post', 'fa-brands fa-wordpress', Post::class);
         yield MenuItem::linkToCrud('Tag', 'fa-solid fa-tag', Tag::class);
+        yield MenuItem::linkToCrud('Comments', 'fa-solid fa-comment', Comment::class);
     }
 }

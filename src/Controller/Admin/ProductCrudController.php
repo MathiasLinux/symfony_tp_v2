@@ -2,21 +2,21 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Post;
+use App\Entity\Product;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
-class PostCrudController extends AbstractCrudController
+class ProductCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return Post::class;
+        return Product::class;
     }
 
 
@@ -24,10 +24,12 @@ class PostCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name'),
-            TextEditorField::new('content'),
-            DateField::new('createdAt'),
-            DateField::new('updatedAt'),
-            AssociationField::new('tag'),
+            TextEditorField::new('description'),
+            MoneyField::new('price')
+                ->setCurrency("EUR")
+                ->setCustomOption('storedAsCents', false),
+            NumberField::new('quantity'),
+            AssociationField::new('seller'),
             TextareaField::new('imageFile')
                 ->setFormType(VichImageType::class)
                 ->setLabel("Images")

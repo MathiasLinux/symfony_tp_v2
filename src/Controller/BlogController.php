@@ -2,9 +2,17 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Post;
+use App\Entity\User;
+use App\Form\CommentType;
+use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -18,11 +26,55 @@ class BlogController extends AbstractController
         ]);
     }
 
-    #[Route('/blog/{id}/{slug}', name: 'app_blog_show', methods: ['GET'])]
-    public function show(Post $post): Response
+    #[Route('/blog/{id}/{slug}', name: 'app_blog_show', methods: ['GET', 'POST'])]
+    public function show(Request $request, Post $post, Security $security, EntityManagerInterface $entityManager, CommentRepository $commentRepository): Response
     {
+        $comment = new Comment();
+        $comments = $commentRepository->findAll();
+        $user = $security->getUser();
+        $commentForm = $this->createForm(CommentType::class, $comment);
+        $commentForm->handleRequest($request);
+
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $content = $commentForm->get("content")->getData();
+            $date = new \DateTimeImmutable();
+            $createdAt = $date->setTimestamp(time());
+
+            $comment->setPost($post)
+                ->setAuthor($user)
+                ->setContent($content)
+                ->setCreatedAt($createdAt);
+            $entityManager->persist($comment);
+            $entityManager->flush();
+
+            return $this->redirectToRoute("app_blog_show", ["id" => $post->getId(), "slug" => $post->getSlug()]);
+        }
+
         return $this->render('blog/show.html.twig', [
-            'post' => $post
+            'post' => $post,
+            'comments' => $comments,
+            'commentForm' => $commentForm
+        ]);
+    }
+
+    #[Route('/blog/{id}/like/{commentId}', name: 'app_blog_like_comment', methods: ['GET'])]
+    public function likeComment(Request $request, Post $post, EntityManagerInterface $entityManager, UserRepository $userRepository, Security $security): Response
+    {
+        $JsonComment = array(
+            "postId" => $post->getId(),
+            "commentId" => $request->query->get("commentId"),
+            "dislike" => false
+        );
+
+        return $this->redirectToRoute("app_blog_show", ["id" => $post->getId(), "slug" => $post->getSlug()]);
+
+    }
+
+    #[Route('/blog/{id}/dislike/{commentId}', name: 'app_blog_dislike_comment', methods: ['GET'])]
+    public function dislikeComment(PostRepository $postRepository): Response
+    {
+        return $this->render('blog/index.html.twig', [
+            'posts' => $postRepository->findAll(),
         ]);
     }
 }

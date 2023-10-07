@@ -26,8 +26,11 @@ class Comment
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column(type: Types::OBJECT, nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?object $likeCom = null;
+
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    private ?Post $post = null;
 
     public function getId(): ?int
     {
@@ -90,6 +93,18 @@ class Comment
     public function setLikeCom(?object $likeCom): static
     {
         $this->likeCom = $likeCom;
+
+        return $this;
+    }
+
+    public function getPost(): ?Post
+    {
+        return $this->post;
+    }
+
+    public function setPost(?Post $post): static
+    {
+        $this->post = $post;
 
         return $this;
     }

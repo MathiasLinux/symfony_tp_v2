@@ -46,3 +46,20 @@ body {
 .tagsPosts {
     font-size: 16pt;
 }
+
+.likeButtons {
+    display: flex;
+    justify-content: space-between;
+    padding: 5%;
+}
+
+.imgProduct {
+    width: 100%;
+}
+
+.productRight {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    margin-top: 10%;
+}

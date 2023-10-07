@@ -16,6 +16,33 @@
         </div>
         <img class="postImgShow" src="{{ vich_uploader_asset(post) }}" alt="">
         <p>{{ post.content | raw }}</p>
+        <div>
+            {{ form(commentForm) }}
+        </div>
+        <div class="container">
+            <div class="row">
+                {% for comment in comments %}
+                    {% if comment.post.id == post.id %}
+                        <div class="col-auto">
+                            <div class="card text-bg-secondary mb-3" style="max-width: 18rem;">
+                                <div class="card-header">{{ comment.author }}</div>
+                                <div class="card-body">
+                                    <p class="card-subtitle publishedDate">
+                                        {{ comment.createdAt | date("H:i d/m/Y") }}</p>
+                                    <p class="card-text">{{ comment.content }}</p>
+                                </div>
+                                <div class="likeButtons">
+                                    <a class="btn btn-success"
+                                       href="{{ path('app_blog_like_comment', {'commentId': comment.id, 'id': post.id}) }}">Like</a>
+                                    <a class="btn btn-danger"
+                                       href="{{ path('app_blog_dislike_comment', {'commentId': comment.id, 'id': post.id}) }}">Dislike</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}
 

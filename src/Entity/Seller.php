@@ -24,26 +24,18 @@ class Seller
     #[ORM\OneToMany(mappedBy: 'seller', targetEntity: Booking::class)]
     private Collection $bookings;
 
+    #[ORM\OneToMany(mappedBy: 'seller', targetEntity: Product::class)]
+    private Collection $products;
+
     public function __construct()
     {
         $this->bookings = new ArrayCollection();
+        $this->products = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
     }
 
     public function getDuration(): ?int
@@ -84,6 +76,53 @@ class Seller
                 $booking->setSeller(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    public function addProduct(Product $product): static
+    {
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
+            $product->setSeller($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): static
+    {
+        if ($this->products->removeElement($product)) {
+            // set the owning side to null (unless already changed)
+            if ($product->getSeller() === $this) {
+                $product->setSeller(null);
+            }
+        }
+
+        return $this;
+    }
+
+    function __toString(): string
+    {
+        return $this->getTitle();
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
 
         return $this;
     }

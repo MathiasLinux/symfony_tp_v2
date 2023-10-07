@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Our Products{% endblock %}
+
+{% block body %}
+    <div class="marginDivBlock">
+        <div class="container">
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-auto">
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{ vich_uploader_asset(product) }}" class="card-img-top" alt="{{ product.name }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">{{ product.description|length > 50 ? product.description|striptags|slice(0, 50) ~ '...' : product.description | raw }}</p>
+                                <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-primary">More
+                                    infos</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

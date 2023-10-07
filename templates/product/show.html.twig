@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="marginDivBlock">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h1>{{ product.name }}</h1>
+                    <img class="imgProduct" src="{{ vich_uploader_asset(product) }}" alt="{{ product.name }}">
+                    <p>{{ product.description | raw }}</p>
+                </div>
+                <div class="col-3 productRight">
+                    <div>For only <b>{{ product.price }} €</b></div>
+                    <br>
+                    <div>Only <b>{{ product.quantity }}</b> product(s) left !</div>
+                    <br>
+                    <a href="{{ path('app_product_buy', {'id': product.id}) }}" class="btn btn-success">Buy Now !</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block title %}
+    {{ product.name }}
+{% endblock %}
+

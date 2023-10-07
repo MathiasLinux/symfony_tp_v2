@@ -34,7 +34,7 @@ class SluggerSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function updateSlug(BeforeEntityPersistedEvent $event): void
+    public function updateSlug(BeforeEntityUpdatedEvent $event): void
     {
         $entity = $event->getEntityInstance();
         $user = $this->security->getUser();
