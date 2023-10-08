@@ -22,24 +22,36 @@
         <div class="container">
             <div class="row">
                 {% for comment in comments %}
-                    {% if comment.post.id == post.id %}
-                        <div class="col-auto">
-                            <div class="card text-bg-secondary mb-3" style="max-width: 18rem;">
-                                <div class="card-header">{{ comment.author }}</div>
-                                <div class="card-body">
-                                    <p class="card-subtitle publishedDate">
-                                        {{ comment.createdAt | date("H:i d/m/Y") }}</p>
-                                    <p class="card-text">{{ comment.content }}</p>
-                                </div>
-                                <div class="likeButtons">
-                                    <a class="btn btn-success"
-                                       href="{{ path('app_blog_like_comment', {'commentId': comment.id, 'id': post.id}) }}">Like</a>
-                                    <a class="btn btn-danger"
-                                       href="{{ path('app_blog_dislike_comment', {'commentId': comment.id, 'id': post.id}) }}">Dislike</a>
-                                </div>
+                    <div class="col-4">
+                        <div class="card text-bg-secondary mb-3" style="max-width: 18rem;">
+                            <div class="card-header">{{ comment.author }}</div>
+                            <div class="card-body">
+                                <p class="card-subtitle publishedDate">
+                                    {{ comment.createdAt | date("H:i d/m/Y") }}</p>
+                                <p class="card-text">{{ comment.content }}</p>
+                            </div>
+                            <div class="likeButtons">
+                                {% set likesCount = 0 %}
+                                {% for like in likes %}
+                                    {% if like.comment == comment and like.dislike == false %}
+                                        {% set likesCount = likesCount + 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% set disLikesCount = 0 %}
+                                {% for like in likes %}
+                                    {% if like.comment == comment and like.dislike == true %}
+                                        {% set disLikesCount = disLikesCount + 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                                <a class="btn btn-success"
+                                   href="{{ path('app_blog_like_comment', {'commentId': comment.id, 'id': post.id}) }}">Like
+                                    ({{ likesCount }})</a>
+                                <a class="btn btn-danger"
+                                   href="{{ path('app_blog_dislike_comment', {'commentId': comment.id, 'id': post.id}) }}">Dislike
+                                    ({{ disLikesCount }})</a>
                             </div>
                         </div>
-                    {% endif %}
+                    </div>
                 {% endfor %}
             </div>
         </div>

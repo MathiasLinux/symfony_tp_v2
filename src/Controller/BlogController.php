@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
+use App\Entity\Like;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\CommentType;
 use App\Repository\CommentRepository;
+use App\Repository\LikeRepository;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,10 +29,15 @@ class BlogController extends AbstractController
     }
 
     #[Route('/blog/{id}/{slug}', name: 'app_blog_show', methods: ['GET', 'POST'])]
-    public function show(Request $request, Post $post, Security $security, EntityManagerInterface $entityManager, CommentRepository $commentRepository): Response
+    public function show(Request $request, Post $post, Security $security, EntityManagerInterface $entityManager, CommentRepository $commentRepository, LikeRepository $likeRepository): Response
     {
         $comment = new Comment();
-        $comments = $commentRepository->findAll();
+        $comments = $commentRepository->findBy(
+            ["post" => $post]
+        );
+        $likes = $likeRepository->findBy(
+            ["comment" => $comments]
+        );
         $user = $security->getUser();
         $commentForm = $this->createForm(CommentType::class, $comment);
         $commentForm->handleRequest($request);
@@ -53,28 +60,109 @@ class BlogController extends AbstractController
         return $this->render('blog/show.html.twig', [
             'post' => $post,
             'comments' => $comments,
-            'commentForm' => $commentForm
+            'commentForm' => $commentForm,
+            'likes' => $likes
         ]);
     }
 
     #[Route('/blog/{id}/like/{commentId}', name: 'app_blog_like_comment', methods: ['GET'])]
-    public function likeComment(Request $request, Post $post, EntityManagerInterface $entityManager, UserRepository $userRepository, Security $security): Response
+    public function likeComment(CommentRepository $commentRepository, EntityManagerInterface $entityManager, Security $security, int $commentId, Post $post, LikeRepository $likeRepository): Response
     {
-        $JsonComment = array(
-            "postId" => $post->getId(),
-            "commentId" => $request->query->get("commentId"),
-            "dislike" => false
-        );
+        $like = new Like();
+        $user = $security->getUser();
+        $currentComment = $commentRepository->find($commentId);
+        if (!($likeRepository->findBy(
+            ['user' => $user,
+                'comment' => $currentComment]
+        ))) {
+            $like->setUser($user);
+            $like->setComment($currentComment);
+            $like->setDislike(false);
+
+            $entityManager->persist($like);
+            $entityManager->flush();
+        } elseif ($likeRepository->findBy(
+            ['user' => $user,
+                'comment' => $currentComment,
+                'dislike' => true]
+        )) {
+            $currentLike = $likeRepository->findOneBy(
+                ['user' => $user,
+                    'comment' => $currentComment,
+                    'dislike' => true]
+            );
+
+            $entityManager->remove($currentLike);
+            $entityManager->flush();
+
+            $like->setUser($user);
+            $like->setComment($currentComment);
+            $like->setDislike(false);
+
+            $entityManager->persist($like);
+            $entityManager->flush();
+        } else {
+            $currentLike = $likeRepository->findOneBy(
+                ['user' => $user,
+                    'comment' => $currentComment]
+            );
+
+            $entityManager->remove($currentLike);
+            $entityManager->flush();
+        }
+
 
         return $this->redirectToRoute("app_blog_show", ["id" => $post->getId(), "slug" => $post->getSlug()]);
 
     }
 
     #[Route('/blog/{id}/dislike/{commentId}', name: 'app_blog_dislike_comment', methods: ['GET'])]
-    public function dislikeComment(PostRepository $postRepository): Response
+    public function dislikeComment(CommentRepository $commentRepository, EntityManagerInterface $entityManager, Security $security, int $commentId, Post $post, LikeRepository $likeRepository): Response
     {
-        return $this->render('blog/index.html.twig', [
-            'posts' => $postRepository->findAll(),
-        ]);
+        $like = new Like();
+        $user = $security->getUser();
+        $currentComment = $commentRepository->find($commentId);
+        if (!($likeRepository->findBy(
+            ['user' => $user,
+                'comment' => $currentComment]
+        ))) {
+            $like->setUser($user);
+            $like->setComment($currentComment);
+            $like->setDislike(true);
+
+            $entityManager->persist($like);
+            $entityManager->flush();
+        } elseif ($likeRepository->findBy(
+            ['user' => $user,
+                'comment' => $currentComment,
+                'dislike' => false]
+        )) {
+            $currentLike = $likeRepository->findOneBy(
+                ['user' => $user,
+                    'comment' => $currentComment,
+                    'dislike' => false]
+            );
+
+            $entityManager->remove($currentLike);
+            $entityManager->flush();
+
+            $like->setUser($user);
+            $like->setComment($currentComment);
+            $like->setDislike(true);
+
+            $entityManager->persist($like);
+            $entityManager->flush();
+        } else {
+            $currentLike = $likeRepository->findOneBy(
+                ['user' => $user,
+                    'comment' => $currentComment]
+            );
+
+            $entityManager->remove($currentLike);
+            $entityManager->flush();
+        }
+
+
+        return $this->redirectToRoute("app_blog_show", ["id" => $post->getId(), "slug" => $post->getSlug()]);
     }
 }
