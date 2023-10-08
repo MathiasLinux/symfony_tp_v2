@@ -45,6 +45,7 @@ class HomeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
             $day = $form->get('day')->getData();
             $time = $form->get('time')->getData();
             $booking->setDay($day)

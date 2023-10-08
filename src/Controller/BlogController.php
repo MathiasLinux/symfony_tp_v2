@@ -43,6 +43,7 @@ class BlogController extends AbstractController
         $commentForm->handleRequest($request);
 
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
             $content = $commentForm->get("content")->getData();
             $date = new \DateTimeImmutable();
             $createdAt = $date->setTimestamp(time());
@@ -68,6 +69,7 @@ class BlogController extends AbstractController
     #[Route('/blog/{id}/like/{commentId}', name: 'app_blog_like_comment', methods: ['GET'])]
     public function likeComment(CommentRepository $commentRepository, EntityManagerInterface $entityManager, Security $security, int $commentId, Post $post, LikeRepository $likeRepository): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
         $like = new Like();
         $user = $security->getUser();
         $currentComment = $commentRepository->find($commentId);
@@ -119,6 +121,7 @@ class BlogController extends AbstractController
     #[Route('/blog/{id}/dislike/{commentId}', name: 'app_blog_dislike_comment', methods: ['GET'])]
     public function dislikeComment(CommentRepository $commentRepository, EntityManagerInterface $entityManager, Security $security, int $commentId, Post $post, LikeRepository $likeRepository): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
         $like = new Like();
         $user = $security->getUser();
         $currentComment = $commentRepository->find($commentId);
