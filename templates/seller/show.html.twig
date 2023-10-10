@@ -20,6 +20,15 @@
                 <th>Duration</th>
                 <td>{{ seller.duration }}</td>
             </tr>
+            <tr>
+                <th>Products</th>
+                <td>
+                    {% for product in products %}
+                        <a class="btn btn-primary"
+                           href="{{ path('app_product_show', {'id': product.id}) }}">{{ product.name }}</a>
+                    {% endfor %}
+                </td>
+            </tr>
             </tbody>
         </table>
         <a class="btn btn-primary" href="{{ path('app_seller') }}">Back to list</a>

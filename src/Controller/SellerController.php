@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Seller;
 use App\Form\AddSellerFormType;
+use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -43,10 +44,14 @@ class SellerController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_seller_show', methods: ['GET'])]
-    public function show(Seller $seller): Response
+    public function show(Seller $seller, ProductRepository $productRepository): Response
     {
+        $products = $productRepository->findBy([
+            "seller" => $seller
+        ]);
         return $this->render('seller/show.html.twig', [
             'seller' => $seller,
+            'products' => $products
         ]);
     }
 

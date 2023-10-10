@@ -46,7 +46,7 @@ class Post
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $author = null;
 
-    #[ORM\OneToMany(mappedBy: 'post', targetEntity: Comment::class)]
+    #[ORM\OneToMany(mappedBy: 'post', targetEntity: Comment::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $comments;
 
     public function __construct()

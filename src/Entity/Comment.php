@@ -31,7 +31,7 @@ class Comment
     #[ORM\ManyToOne(inversedBy: 'comments')]
     private ?Post $post = null;
 
-    #[ORM\OneToMany(mappedBy: 'comment', targetEntity: Like::class)]
+    #[ORM\OneToMany(mappedBy: 'comment', targetEntity: Like::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $likes;
 
     public function __construct()
